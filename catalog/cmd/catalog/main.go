@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/MarNawar/microservices/account"
+	"github.com/MarNawar/microservices/catalog"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/tinrab/retry"
 )
@@ -17,13 +17,12 @@ func main() {
 	var cfg Config
 	err := envconfig.Process("", &cfg)
 	if err != nil{
-		log.Fatal(err);
+		log.Fatal(err)
 	}
 
-	var r account.Repository
+	var r catalog.Repository
 	retry.ForeverSleep(2*time.Second, func(_ int)(err error){
-		r, err = account.NewPostgresRepository(cfg.DatabaseURL)
-
+		r, err = catalog.NewPostgresRepository(cfg.DatabaseURL)
 		if err != nil{
 			log.Panicln(err)
 		}
@@ -31,7 +30,8 @@ func main() {
 	})
 
 	defer r.Close()
-	log.Panicln("Listening on port 8080...",)
-	s:= account.NewService(r)
-	log.Fatal(account.ListenGRPC(s, 8080))
+
+	log.Panicln("Listening on port 8080 ...")
+	s := catalog.NewService(r)
+	log.Fatal(catalog.ListenGRPC(s, 8080))
 }
