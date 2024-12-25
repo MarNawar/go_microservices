@@ -1,6 +1,11 @@
 package main
 
-import "github.com/99designs/gqlgen/graphql"
+import (
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/MarNawar/microservices/account"
+	"github.com/MarNawar/microservices/catalog"
+	"github.com/MarNawar/microservices/order"
+)
 
 type Server struct {
 	accountClient *account.Client
@@ -46,14 +51,14 @@ func (s *Server) Query() QueryResolver {
 	}
 }
 
-// func (s *Server) Account() AccountResolver {
-// 	return &accountResolver{
-// 		server: s,
-// 	}
-// }
+func (s *Server) Account() AccountResolver {
+	return &accountResolver{
+		server: s,
+	}
+}
 
 func (s *Server) ToExecutableSchema() graphql.ExecutableSchema {
 	return NewExecutableSchema(Config{
-		Reslvers: s,
+		Resolvers: s,
 	})
 }
